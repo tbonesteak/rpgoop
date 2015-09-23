@@ -43,22 +43,35 @@ class ViewController: UIViewController {
         } else {
             enemy = DevilWizard(startingHp: 60, attackPwr: 15)
         }
+        
+        enemyImg.hidden = false;
     }
 
     @IBAction func onChestTapped(sender: AnyObject) {
+        chestBtn.hidden = true;
+        printLbl.text = chestMessage
+        NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector: "generateRandomEnemy", userInfo: nil, repeats: false)
     }
 
     @IBAction func attackTapped(sender: AnyObject) {
         
         if enemy.attemptAttack(player.attackPwr) {
             printLbl.text = "Attacked \(enemy.type) for \(player.attackPwr) HP"
+            enemyHpLbl.text = "\(enemy.hp) HP"
         }   else {
             printLbl.text = "Attack was unsuccessful";
         }
         
         if let loot = enemy.dropLoot() {
+            player.addItemToInventory(loot)
             chestMessage = "\(player.name) found \(loot)"
             chestBtn.hidden = false
+        }
+        
+        if !enemy.isAlive {
+            enemyHpLbl.text = ""
+            printLbl.text = "Killed \(enemy.type)"
+            enemyImg.hidden = true
         }
         
     }
